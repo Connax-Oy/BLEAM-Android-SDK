@@ -54,6 +54,16 @@ Without these permissions library **won't work at all**
 <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 ```
 
+## Usage example
+
+- Download code from this repo and open in Android Studio
+- Change `appId` and `appSecret` in `MainActivity.java`
+- Build and run
+
+Usage example contains basic realisation of BroadcastReceiver, Activity with all features linked to buttons and event logging.
+
+Event logging may be used for debugging your geofences and approved models on the go. In your real application you don't need to receive `ACTION_LOGS` broadcast.
+
 ## Usage
 
 ### 1. Result receiver
@@ -83,7 +93,7 @@ To receive BLEAM results you need to create BroadcastReceiver.
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
-                BleamSDK.ACTION_RESULT:
+                case BleamSDK.ACTION_BLEAM:
                     if (intent.getBooleanExtra(BleamSDK.EXTRA_SUCCESS, false)) {
                         onBleamSuccess(context,
                                 intent.getStringExtra(BleamSDK.EXTRA_EXTERNAL_ID),
@@ -93,9 +103,8 @@ To receive BLEAM results you need to create BroadcastReceiver.
                                 intent.getIntExtra(BleamSDK.EXTRA_ERROR_CODE, -1));
                     }
                     break;
-                BleamSDK.ACTION_GEOFENCE:
+                case BleamSDK.ACTION_GEOFENCE:
                     onGeofenceEnter(context, intent.getStringExtra(BleamSDK.EXTRA_EXTERNAL_ID));
-                    break;
             }
         
         }
