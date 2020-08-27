@@ -14,3 +14,5 @@
 - Triggers only in [manual BLEAM launch](README.md#manual-bleam-launch) if user isn't in geofence or location wasn't found
 ### ERROR_LOCATION_DISABLED
 - Triggers if location permission wasn't granted
+### ERROR_NEWER_SDK_NEEDED
+- Triggers if tries to interact with newer versions of models/BLEAM Scanners which are not supported in current version of SDK and requires update

@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Subscribing to broadcasts to show in logs on Activity
         IntentFilter filter = new IntentFilter();
-        filter.addAction(BleamSDK.ACTION_BLEAM);
+        filter.addAction(BleamSDK.ACTION_RESULT);
         filter.addAction(BleamSDK.ACTION_GEOFENCE);
         filter.addAction(BleamSDK.ACTION_LOGS);
         registerReceiver(receiver, filter);
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
-                case BleamSDK.ACTION_BLEAM:
+                case BleamSDK.ACTION_RESULT:
                     if (intent.getBooleanExtra(BleamSDK.EXTRA_SUCCESS, false)) {
                         onBleamSuccess(intent.getStringExtra(BleamSDK.EXTRA_EXTERNAL_ID),
                                 intent.getIntExtra(BleamSDK.EXTRA_POSITION, -1));
@@ -183,6 +183,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case BleamSDK.ERROR_LOCATION_DISABLED:
                 onLogs("No location permission or location is disabled");
+                break;
+            case BleamSDK.ERROR_NEWER_SDK_NEEDED:
+                onLogs("Outdated SDK");
                 break;
             default:
                 onLogs("Unknown error");

@@ -79,8 +79,8 @@ To receive BLEAM results you need to create BroadcastReceiver.
     android:enabled="true"
     android:exported="false">
     <intent-filter>
-        <action android:name="io.connax.bleam.BLEAM_RESULT" />
-        <action android:name="io.connax.bleam.BLEAM_GEOFENCING" />
+        <action android:name="io.connax.bleam.ACTION_RESULT" />
+        <action android:name="io.connax.bleam.ACTION_GEOFENCE" />
     </intent-filter>
 </receiver>
 ```
@@ -93,7 +93,7 @@ To receive BLEAM results you need to create BroadcastReceiver.
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
-                case BleamSDK.ACTION_BLEAM:
+                case BleamSDK.ACTION_RESULT:
                     if (intent.getBooleanExtra(BleamSDK.EXTRA_SUCCESS, false)) {
                         onBleamSuccess(context,
                                 intent.getStringExtra(BleamSDK.EXTRA_EXTERNAL_ID),
@@ -104,9 +104,9 @@ To receive BLEAM results you need to create BroadcastReceiver.
                     }
                     break;
                 case BleamSDK.ACTION_GEOFENCE:
-                    onGeofenceEnter(context, intent.getStringExtra(BleamSDK.EXTRA_EXTERNAL_ID));
+                    onGeofenceEnter(context,
+                            intent.getStringExtra(BleamSDK.EXTRA_EXTERNAL_ID));
             }
-        
         }
 
         public void onBleamSuccess(Context context, String extId, int position) {
@@ -141,6 +141,9 @@ To receive BLEAM results you need to create BroadcastReceiver.
                     break;
                 case BleamSDK.ERROR_LOCATION_DISABLED:
                     // TODO process "no location permission" error
+                    break;
+                case BleamSDK.ERROR_NEWER_SDK_NEEDED:
+                    // TODO process "SDK outdated" error
                     break;
                 default:
                     // TODO process or log "something went terribly wrong" error

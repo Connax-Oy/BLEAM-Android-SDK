@@ -12,7 +12,12 @@
         <receiver
             android:name=".BleamBroadcastReceiver"
             android:enabled="true"
-            android:exported="false"></receiver>
+            android:exported="false">
+            <intent-filter>
+                <action android:name="io.connax.bleam.ACTION_RESULT" />
+                <action android:name="io.connax.bleam.ACTION_GEOFENCE" />
+            </intent-filter>
+        </receiver>
 
         <activity android:name=".MainActivity">
             <intent-filter>

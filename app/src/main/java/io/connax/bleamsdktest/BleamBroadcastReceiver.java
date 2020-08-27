@@ -11,7 +11,7 @@ public class BleamBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         switch (intent.getAction()) {
-            case BleamSDK.ACTION_BLEAM:
+            case BleamSDK.ACTION_RESULT:
                 if (intent.getBooleanExtra(BleamSDK.EXTRA_SUCCESS, false)) {
                     onBleamSuccess(context,
                             intent.getStringExtra(BleamSDK.EXTRA_EXTERNAL_ID),
@@ -59,6 +59,9 @@ public class BleamBroadcastReceiver extends BroadcastReceiver {
                 break;
             case BleamSDK.ERROR_LOCATION_DISABLED:
                 // TODO process "no location permission" error
+                break;
+            case BleamSDK.ERROR_NEWER_SDK_NEEDED:
+                // TODO process "SDK outdated" error
                 break;
             default:
                 // TODO process or log "something went terribly wrong" error
