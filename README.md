@@ -1,6 +1,6 @@
 # BLEAM Android SDK
 
-BLEAM Android SDK is an essential part of ThingPay software systems. It enables proximity detection by using Bluetooth Low Energy (BLE) capabilities of the end user’s phone. Bluetooth RSSI data received from BLESc beacons on the service station helps BLEAM Android SDK to pinpoint the end user’s phone in relation to a service terminal.
+BLEAM Android SDK is an essential part of BLEAM systems. It enables proximity detection by using Bluetooth Low Energy (BLE) capabilities of the end user’s phone. Bluetooth RSSI data received from BLESc beacons on the service station helps BLEAM Android SDK to pinpoint the end user’s phone in relation to a service terminal.
 
 ## [Glossary](GLOSSARY.md)
 
@@ -21,7 +21,7 @@ allprojects {
 **Step 2.** Add the dependency
 ```gradle
 dependencies {
-    implementation 'com.github.connax:BLEAM-Android-SDK:2.0.2'
+    implementation 'com.github.connax:BLEAM-Android-SDK:2.0.3'
 }
 ```
 
@@ -38,7 +38,7 @@ And you're ready to use library!
 - You must request `ACCESS_COARSE_LOCATION` permission
   - Both BLE and geofences require location permission
   - Otherwise library won't work at all
-- You should request `ACCESS_BACKGROUND_LOCATION` permission on Adroid 10 or higher
+- You should request `ACCESS_BACKGROUND_LOCATION` permission on Android 10 or higher
   - Otherwise only manual BLEAM launch is supported
 
 ## Permissions
@@ -67,12 +67,11 @@ Event logging may be used for debugging your geofences and approved models on th
 ## Usage
 
 ### 1. Result receiver
-
 To receive BLEAM results you need to create BroadcastReceiver.
 
 - Create receiver using Android Studio context menu: `New -> Other -> BroadcastReceiver`.
 - In creation window uncheck `Exported` so you will get broadcasts only from inside application.
-- In `AndroidMainfest.xml` find your new BroadcastReceiver and add intent-filter:
+- In `AndroidManifest.xml` find your new BroadcastReceiver and add intent-filter:
 ```xml
 <receiver
     android:name=".BleamBroadcastReceiver"
@@ -81,6 +80,7 @@ To receive BLEAM results you need to create BroadcastReceiver.
     <intent-filter>
         <action android:name="io.connax.bleam.ACTION_RESULT" />
         <action android:name="io.connax.bleam.ACTION_GEOFENCE" />
+        <action android:name="io.connax.bleam.ACTION_GEOFENCING" />
     </intent-filter>
 </receiver>
 ```
@@ -92,20 +92,28 @@ To receive BLEAM results you need to create BroadcastReceiver.
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case BleamSDK.ACTION_RESULT:
-                    if (intent.getBooleanExtra(BleamSDK.EXTRA_SUCCESS, false)) {
-                        onBleamSuccess(context,
-                                intent.getStringExtra(BleamSDK.EXTRA_EXTERNAL_ID),
-                                intent.getIntExtra(BleamSDK.EXTRA_POSITION, -1));
-                    } else {
-                        onBleamFailure(context,
-                                intent.getIntExtra(BleamSDK.EXTRA_ERROR_CODE, -1));
-                    }
-                    break;
-                case BleamSDK.ACTION_GEOFENCE:
-                    onGeofenceEnter(context,
-                            intent.getStringExtra(BleamSDK.EXTRA_EXTERNAL_ID));
+            String action = intent.getAction();
+            if (action != null) {
+                switch (action) {
+                    case BleamSDK.ACTION_RESULT:
+                        if (intent.getBooleanExtra(BleamSDK.EXTRA_SUCCESS, false)) {
+                            onBleamSuccess(context,
+                                    intent.getStringExtra(BleamSDK.EXTRA_EXTERNAL_ID),
+                                    intent.getIntExtra(BleamSDK.EXTRA_POSITION, -1));
+                        } else {
+                            onBleamFailure(context,
+                                    intent.getStringExtra(BleamSDK.EXTRA_FROM),
+                                    intent.getIntExtra(BleamSDK.EXTRA_ERROR_CODE, -1));
+                        }
+                        break;
+                    case BleamSDK.ACTION_GEOFENCE:
+                        onGeofenceEnter(context,
+                                intent.getStringExtra(BleamSDK.EXTRA_EXTERNAL_ID));
+                        break;
+                    case BleamSDK.ACTION_GEOFENCING:
+                        onGeofencingState(context,
+                                intent.getBooleanExtra(BleamSDK.EXTRA_ENABLED, false));
+                }
             }
         }
 
@@ -119,10 +127,18 @@ To receive BLEAM results you need to create BroadcastReceiver.
             // extId is external id of entered geofence
         }
 
-        public void onBleamFailure(Context context, int errorCode) {
+        public void onGeofencingState(Context context, Boolean enabled) {
+            if (enabled) {
+                // Geofencing is enabled
+            } else {
+                // Geofencing is disabled
+            }
+        }
+
+        public void onBleamFailure(Context context, String from, int errorCode) {
             switch (errorCode) {
-                case BleamSDK.ERROR_WRONG_APP_ID_SECRET_OR_GEOFENCE:
-                    // TODO process "wrong ID" error
+                case BleamSDK.ERROR_WRONG_APP_ID_OR_SECRET:
+                    // TODO process "wrong App ID or Secret" error
                     break;
                 case BleamSDK.ERROR_NO_TF_MODEL:
                     // TODO process "geofence has no approved model" error
@@ -135,16 +151,21 @@ To receive BLEAM results you need to create BroadcastReceiver.
                     break;
                 case BleamSDK.ERROR_BLUETOOTH_NOT_ENABLED:
                     // TODO process "bluetooth disabled" error
+                    // Consider prompt user that application needs Bluetooth enabled
                     break;
                 case BleamSDK.ERROR_NOT_IN_GEOFENCE:
                     // TODO process "location not found" error
                     break;
                 case BleamSDK.ERROR_LOCATION_DISABLED:
                     // TODO process "no location permission" error
+                    // Consider prompt user about granting location permission
                     break;
                 case BleamSDK.ERROR_NEWER_SDK_NEEDED:
                     // TODO process "SDK outdated" error
+                    // Consider prompt user about updating application
                     break;
+                case BleamSDK.ERROR_WRONG_GEOFENCE:
+                    // TODO process "Wrong geofence" error
                 default:
                     // TODO process or log "something went terribly wrong" error
             }
@@ -168,7 +189,7 @@ BleamSDK bleamSDK = new BleamSDK(context, "appId", "appSecret");
 
 ### 3. Launch BLEAM
 #### Using built-in geofencing
-If you will use built-in geofencing, BLEAM will trigger automatically without interaction. List of geofences will refresh every 24 hours from enabling.
+If you will use built-in geofencing, BLEAM will trigger automatically without interaction. List of geofences will refresh every 24 hours from enabling. If geofencing fails to start, it will try to start again in 24 hours.
 
 - To enable built-in geofencing you just need call this function:
 ```java
@@ -178,11 +199,18 @@ bleamSDK.enableGeofencing()
 ```java
 bleamSDK.disableGeofencing()
 ```
+
+- To check if geofencing is enabled you can use function:
+```java
+bleamSDK.isGeofencingEnabled()
+```
+
 #### Using your own geofencing
 - If you are using your own geofencing realization you can launch BLEAM using external ID of your geofence:
 ```java
 bleamSDK.startBleam("externalID")
 ```
+
 #### Manual BLEAM launch
 - If you want start BLEAM immediately without knowing your location, you can start it using GPS:
 ```java

@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(BleamSDK.ACTION_RESULT);
         filter.addAction(BleamSDK.ACTION_GEOFENCE);
+        filter.addAction(BleamSDK.ACTION_GEOFENCING);
         filter.addAction(BleamSDK.ACTION_LOGS);
         registerReceiver(receiver, filter);
 
@@ -113,10 +114,8 @@ public class MainActivity extends AppCompatActivity {
     public void onGeoClick(View view) {
         if (sdk.isGeofencingEnabled()) {
             sdk.disableGeofencing();
-            binding.geoButton.setText("Enable Geofencing");
         } else {
             sdk.enableGeofencing();
-            binding.geoButton.setText("Disable Geofencing");
         }
     }
 
@@ -131,8 +130,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onLogs(String logs) {
-        binding.logsView.setText(binding.logsView.getText() + "\n" + logs);
-        binding.scrollView.post(() -> binding.scrollView.fullScroll(ScrollView.FOCUS_DOWN));
+        if (logs != null) {
+            binding.logsView.setText(binding.logsView.getText() + "\n" + logs);
+            binding.scrollView.post(() -> binding.scrollView.fullScroll(ScrollView.FOCUS_DOWN));
+        }
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -144,12 +145,15 @@ public class MainActivity extends AppCompatActivity {
                         onBleamSuccess(intent.getStringExtra(BleamSDK.EXTRA_EXTERNAL_ID),
                                 intent.getIntExtra(BleamSDK.EXTRA_POSITION, -1));
                     } else {
-                        onBleamFailure(intent.getIntExtra(BleamSDK.EXTRA_ERROR_CODE, -1));
+                        onBleamFailure(intent.getStringExtra(BleamSDK.EXTRA_FROM),
+                                intent.getIntExtra(BleamSDK.EXTRA_ERROR_CODE, -1));
                     }
                     break;
                 case BleamSDK.ACTION_GEOFENCE:
                     onGeofenceEnter(intent.getStringExtra(BleamSDK.EXTRA_EXTERNAL_ID));
                     break;
+                case BleamSDK.ACTION_GEOFENCING:
+                    onGeofencingState(intent.getBooleanExtra(BleamSDK.EXTRA_ENABLED, false));
                 case BleamSDK.ACTION_LOGS:
                     onLogs(intent.getStringExtra(BleamSDK.EXTRA_LOGS));
             }
@@ -160,35 +164,48 @@ public class MainActivity extends AppCompatActivity {
         onLogs("BLEAM finished on geo " + extId + ", position: " + position);
     }
 
-    private void onBleamFailure(int error) {
+    private void onBleamFailure(String from, int error) {
         onLogs("BLEAM has encountered error:");
         switch (error) {
-            case BleamSDK.ERROR_WRONG_APP_ID_SECRET_OR_GEOFENCE:
-                onLogs("Wrong application ID, secret or geofence ID");
+            case BleamSDK.ERROR_WRONG_APP_ID_OR_SECRET:
+                onLogs(from + ": Wrong application ID or secret");
                 break;
             case BleamSDK.ERROR_NO_TF_MODEL:
-                onLogs("Geofence has no approved model");
+                onLogs(from + ": Geofence has no approved model");
                 break;
             case BleamSDK.ERROR_SERVER_CONNECTION:
-                onLogs("No connection to server");
+                onLogs(from + ": No connection to server");
                 break;
             case BleamSDK.ERROR_DEVICE_NOT_SUPPORTED:
-                onLogs("Device not supported");
+                onLogs(from + ": Device not supported");
                 break;
             case BleamSDK.ERROR_BLUETOOTH_NOT_ENABLED:
-                onLogs("Bluetooth disabled");
+                onLogs(from + ": Bluetooth disabled");
                 break;
             case BleamSDK.ERROR_NOT_IN_GEOFENCE:
-                onLogs("Device is not in geofence");
+                onLogs(from + ": Device is not in geofence");
                 break;
             case BleamSDK.ERROR_LOCATION_DISABLED:
-                onLogs("No location permission or location is disabled");
+                onLogs(from + ": No location permission or location is disabled");
                 break;
             case BleamSDK.ERROR_NEWER_SDK_NEEDED:
-                onLogs("Outdated SDK");
+                onLogs(from + ": Outdated SDK");
+                break;
+            case BleamSDK.ERROR_WRONG_GEOFENCE:
+                onLogs(from + ": Wrong geofence");
                 break;
             default:
-                onLogs("Unknown error");
+                onLogs(from + ": Unknown error");
+        }
+    }
+
+    private void onGeofencingState(boolean enabled) {
+        if (enabled) {
+            onLogs("Geofencing enabled");
+            binding.geoButton.setText("Disable geofencing");
+        } else {
+            onLogs("Geofencing disabled");
+            binding.geoButton.setText("Enable geofencing");
         }
     }
 

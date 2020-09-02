@@ -16,6 +16,7 @@
             <intent-filter>
                 <action android:name="io.connax.bleam.ACTION_RESULT" />
                 <action android:name="io.connax.bleam.ACTION_GEOFENCE" />
+                <action android:name="io.connax.bleam.ACTION_GEOFENCING" />
             </intent-filter>
         </receiver>
 
