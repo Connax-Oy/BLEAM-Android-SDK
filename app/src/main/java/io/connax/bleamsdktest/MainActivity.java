@@ -18,8 +18,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ScrollView;
 
-import com.google.android.material.button.MaterialButton;
-
 import io.connax.bleam.BleamSDK;
 import io.connax.bleamsdktest.databinding.ActivityMainBinding;
 
@@ -70,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton("OK", onClickListener)
                     .setCancelable(false)
                     .create().show();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
