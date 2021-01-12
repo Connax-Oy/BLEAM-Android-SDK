@@ -8,8 +8,8 @@ android {
         applicationId "io.connax.bleamsdktest"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 20900
+        versionName "2.0.9.00"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -38,5 +38,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation 'com.github.connax:BLEAM-Android-SDK:2.0.8'
+    implementation 'com.github.connax:BLEAM-Android-SDK:2.0.9'
 }

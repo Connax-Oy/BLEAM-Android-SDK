@@ -21,7 +21,7 @@ allprojects {
 **Step 2.** Add the dependency
 ```gradle
 dependencies {
-    implementation 'com.github.connax:BLEAM-Android-SDK:2.0.8'
+    implementation 'com.github.connax:BLEAM-Android-SDK:2.0.9'
 }
 ```
 
