@@ -21,7 +21,7 @@ allprojects {
 **Step 2.** Add the dependency
 ```gradle
 dependencies {
-    implementation 'com.github.connax:BLEAM-Android-SDK:2.0.9'
+    implementation 'com.github.connax:BLEAM-Android-SDK:2.1.2'
 }
 ```
 
@@ -44,6 +44,10 @@ And you're ready to use library!
 ## Permissions
 
 Without these permissions library **won't work at all**
+
+You can either request them by yourself or call SDK Splashscreen
+
+### Request by yourself
 
 - You need grant fine location permission for library to work:
 ```xml
