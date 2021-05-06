@@ -1,6 +1,7 @@
 package io.connax.bleamsdktest;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -19,10 +20,12 @@ import android.view.View;
 import android.widget.ScrollView;
 
 import io.connax.bleam.BleamSDK;
+import io.connax.bleam.splash.SplashActivity;
 import io.connax.bleamsdktest.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
     private final static int PERMISSIONS_REQUEST = 42;
+    private final static int REQUEST_SPLASH = 4242;
     ActivityMainBinding binding;
     private BleamSDK sdk;
 
@@ -52,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
         // Checking location permission
         // You can use your own realisation of permission requests
         // Just make sure location is enabled before using BLEAM SDK
-        checkPermissions();
+
+        // checkPermissions();
+        showSplash();
     }
 
     @Override
@@ -69,6 +74,25 @@ public class MainActivity extends AppCompatActivity {
                     .setCancelable(false)
                     .create().show();
         } catch (Exception ignored) {
+        }
+    }
+
+    private void showSplash() {
+        if (!sdk.wasSplashShowed() || !sdk.arePermissionsGranted()) {
+            Intent intent = new Intent(this, SplashActivity.class);
+            startActivityForResult(intent, REQUEST_SPLASH);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_SPLASH) {
+            if (resultCode == RESULT_OK) {
+                // Start geofencing??
+            } else {
+                showDialog("BLEAM won't work", ((dialogInterface, i) -> finish()));
+            }
         }
     }
 
@@ -124,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onBleamManual(View view) {
         // Start BLEAM manually using geofence's External ID
-        sdk.startBleam(binding.extIdEdit.getText().toString());
+        sdk.startBleam(binding.extIdEdit.getText().toString(), true);
     }
 
     public void onLogs(String logs) {
@@ -134,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {

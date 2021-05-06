@@ -54,6 +54,32 @@ Without these permissions library **won't work at all**
 <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 ```
 
+### Splashscreen
+
+If you don't want to implement permission requests by yourself and/or want to show that you're using our SDK, you can use splashscreen.
+- Just start activity for result (if it wasn't shown before or permission aren't granted):
+```java
+if (!sdk.wasSplashShowed() || !sdk.arePermissionsGranted()) {
+    Intent intent = new Intent(this, SplashActivity.class);
+    startActivityForResult(intent, REQUEST_SPLASH);
+}
+```
+
+- And receive result:
+```java
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == REQUEST_SPLASH) {
+        if (resultCode == RESULT_OK) {
+            // SDK now is fully functional
+        } else {
+            // Splashscreen terms weren't accepted, or permissions wan't granted
+        }
+    }
+}
+```
+
 ## Usage example
 
 - Download code from this repo and open in Android Studio
