@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
         // You can use your own realisation of permission requests
         // Just make sure location is enabled before using BLEAM SDK
 
-        // checkPermissions();
         showSplash();
     }
 
@@ -92,43 +91,6 @@ public class MainActivity extends AppCompatActivity {
                 // Start geofencing??
             } else {
                 showDialog("BLEAM won't work", ((dialogInterface, i) -> finish()));
-            }
-        }
-    }
-
-    private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
-                showDialog("Fine location is needed", (dialogInterface, i) -> requestPermissions());
-            } else {
-                requestPermissions();
-            }
-        }
-    }
-
-    private void requestPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION},
-                    PERMISSIONS_REQUEST
-            );
-        } else {
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST
-            );
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSIONS_REQUEST) {
-            if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                showDialog("Bye then", ((dialogInterface, i) -> finish()));
             }
         }
     }
