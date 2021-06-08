@@ -238,8 +238,11 @@ bleamSDK.isGeofencingEnabled()
 #### Using your own geofencing
 - If you are using your own geofencing realization you can launch BLEAM using external ID of your geofence:
 ```java
-bleamSDK.startBleam("externalID")
+bleamSDK.startBleam("externalID", enableArounds)
 ```
+where `enableArounds` is `bool`:
+- Launched BLEAM will work only with defined location if `enableArounds` is **false**
+- Launched BLEAM will work with locations nearby defined as well, if `enableAround` is **true**
 
 #### Manual BLEAM launch
 - If you want start BLEAM immediately without knowing your location, you can start it using GPS:
