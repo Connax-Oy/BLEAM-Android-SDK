@@ -21,7 +21,7 @@ allprojects {
 **Step 2.** Add the dependency
 ```gradle
 dependencies {
-    implementation 'com.github.connax:BLEAM-Android-SDK:2.1.4'
+    implementation 'com.github.connax:BLEAM-Android-SDK:2.1.9'
 }
 ```
 
@@ -64,7 +64,7 @@ If you don't want to implement permission requests by yourself and/or want to sh
 - Just start activity for result (if it wasn't shown before or permission aren't granted):
 ```java
 if (!sdk.wasSplashShowed() || !sdk.arePermissionsGranted()) {
-    Intent intent = new Intent(this, SplashActivity.class);
+    Intent intent = new Intent(this, BleamAboutActivity.class);
     startActivityForResult(intent, REQUEST_SPLASH);
 }
 ```

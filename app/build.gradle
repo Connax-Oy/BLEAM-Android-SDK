@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "io.connax.bleamsdktest"
         minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 20900
-        versionName "2.0.9.00"
+        targetSdkVersion 31
+        versionCode 21900
+        versionName "2.1.9.00"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -38,5 +38,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation 'com.github.connax:BLEAM-Android-SDK:2.1.4'
+    implementation 'com.github.connax:BLEAM-Android-SDK:2.1.9'
 }

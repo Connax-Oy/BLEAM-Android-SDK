@@ -20,7 +20,7 @@ import android.view.View;
 import android.widget.ScrollView;
 
 import io.connax.bleam.BleamSDK;
-import io.connax.bleam.splash.SplashActivity;
+import io.connax.bleam.splash.BleamAboutActivity;
 import io.connax.bleamsdktest.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showSplash() {
         if (!sdk.wasSplashShowed() || !sdk.arePermissionsGranted()) {
-            Intent intent = new Intent(this, SplashActivity.class);
+            Intent intent = new Intent(this, BleamAboutActivity.class);
             startActivityForResult(intent, REQUEST_SPLASH);
         }
     }
