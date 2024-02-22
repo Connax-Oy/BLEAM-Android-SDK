@@ -21,7 +21,7 @@ allprojects {
 **Step 2.** Add the dependency
 ```gradle
 dependencies {
-    implementation 'com.github.connax:BLEAM-Android-SDK:2.1.9'
+    implementation 'com.github.connax:BLEAM-Android-SDK:2.3.1'
 }
 ```
 
@@ -29,8 +29,8 @@ And you're ready to use library!
 
 ## Requirements
 
-- Minimum supported Android version is 5.0 (API level 21)
-  - Required BLE features has proper interface only in API 21+
+- Minimum supported Android version is 5.0 (API level 23)
+  - Required BLE features has proper interface only in API 23+
 - User device must have Google Services preinstalled
   - Library depends on Google Location Services
 - User device must have Bluetooth 4.0 or higher
